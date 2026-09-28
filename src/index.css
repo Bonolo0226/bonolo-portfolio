@@ -1,0 +1,268 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Bright champagne/gold editorial base -- replaces the previous
+     dark theme entirely. Nothing in this palette goes dark. */
+  --color-bg: #f5eeda;
+  --color-bg-alt: #ece0c4;
+  --color-surface: #fbf6ea;
+  --color-surface-elevated: #ffffff;
+
+  --color-border: rgba(43, 32, 19, 0.12);
+  --color-border-strong: rgba(43, 32, 19, 0.22);
+
+  --color-text-primary: #2b2013;
+  --color-text-secondary: #5f5340;
+  --color-text-muted: #8c7f66;
+
+  /* Deep, antique gold -- expensive rather than bright/orange */
+  --color-accent: #a8792f;
+  --color-accent-bright: #c9a15d;
+  --color-accent-soft: rgba(168, 121, 47, 0.14);
+
+  /* Deep brown/charcoal, used sparingly for contrast (never as a
+     full section background -- the brief is explicit: nothing dark) */
+  --color-contrast: #241c14;
+
+  --font-display: "Fraunces", "Inter", serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  position: relative;
+}
+
+/* Very fine grain texture over the whole page, per the brief's
+   "fine texture/noise" note -- subtle enough to add depth without
+   reading as noisy. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Section tone system ---------- */
+.tone-base {
+  background-color: var(--color-bg);
+}
+.tone-alt {
+  background-color: var(--color-bg-alt);
+}
+
+/* Soft gold light blooms behind hero/section content -- "polished
+   champagne glass + soft studio lighting". Purely decorative. */
+.ambient-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.ambient-glow::before,
+.ambient-glow::after {
+  content: "";
+  position: absolute;
+  width: 55vw;
+  height: 55vw;
+  max-width: 650px;
+  max-height: 650px;
+  border-radius: 9999px;
+  filter: blur(20px);
+}
+.ambient-glow::before {
+  top: -18%;
+  left: -8%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(201, 161, 93, 0.22) 45%,
+    transparent 72%
+  );
+}
+.ambient-glow::after {
+  bottom: -22%;
+  right: -10%;
+  background: radial-gradient(
+    circle,
+    rgba(201, 161, 93, 0.28) 0%,
+    rgba(255, 255, 255, 0.15) 45%,
+    transparent 72%
+  );
+}
+
+/* ---------- Glass surfaces ---------- */
+/* "Clear polished glass" rather than frosted: lower opacity, lighter
+   blur, and a bright thin edge so content behind stays legible.
+   Built via @apply on Tailwind's own backdrop-blur utilities -- a
+   hand-written backdrop-filter pair gets its unprefixed property
+   stripped by the minifier, which breaks the blur in Firefox. */
+.glass {
+  @apply backdrop-blur-md backdrop-saturate-150 border transition-colors duration-300;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.85) inset,
+    0 8px 24px -16px rgba(90, 66, 20, 0.25);
+}
+.glass:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.glass-strong {
+  @apply backdrop-blur-lg backdrop-saturate-150 border transition-colors duration-300;
+  background: rgba(255, 255, 255, 0.26);
+  border-color: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+    0 14px 32px -18px rgba(90, 66, 20, 0.3);
+}
+.glass-strong:hover {
+  background: rgba(255, 255, 255, 0.34);
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+/* Gold sheen sweep for buttons -- a soft diagonal highlight that
+   passes across on hover, rather than a colour change. */
+.btn-sheen,
+.btn-glass,
+.btn-gold {
+  position: relative;
+  overflow: hidden;
+}
+.btn-sheen::before,
+.btn-glass::before,
+.btn-gold::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+}
+.btn-sheen:hover::before,
+.btn-glass:hover::before,
+.btn-gold:hover::before {
+  transform: translateX(120%);
+}
+
+/* Cursor-aware spotlight for cards */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    280px circle at var(--spot-x, 50%) var(--spot-y, 0%),
+    rgba(255, 255, 255, 0.5),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.focus\:not-sr-only:focus {
+  position: fixed;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Premium glass buttons ---------- */
+.btn-glass,
+.btn-gold {
+  @apply inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-transform duration-200 ease-out;
+}
+.btn-glass {
+  @apply backdrop-blur-md backdrop-saturate-150 border transition-colors duration-300;
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+    0 10px 24px -12px rgba(90, 66, 20, 0.35);
+}
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.32);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+.btn-gold {
+  @apply border;
+  color: var(--color-contrast);
+  background: linear-gradient(135deg, #e3c88f 0%, #c9a15d 55%, #b98f47 100%);
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.65) inset,
+    0 12px 28px -12px rgba(150, 105, 30, 0.7);
+}
+.btn-glass:focus-visible,
+.btn-gold:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+.btn-arrow {
+  transition: transform 0.25s ease;
+}
+.btn-glass:hover .btn-arrow,
+.btn-gold:hover .btn-arrow {
+  transform: translateX(4px);
+}
