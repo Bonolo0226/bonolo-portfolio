@@ -142,13 +142,15 @@ body::after {
    passes across on hover, rather than a colour change. */
 .btn-sheen,
 .btn-glass,
-.btn-gold {
+.btn-gold,
+.glossy-gold {
   position: relative;
   overflow: hidden;
 }
 .btn-sheen::before,
 .btn-glass::before,
-.btn-gold::before {
+.btn-gold::before,
+.glossy-gold::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -163,8 +165,52 @@ body::after {
 }
 .btn-sheen:hover::before,
 .btn-glass:hover::before,
-.btn-gold:hover::before {
+.btn-gold:hover::before,
+.glossy-gold:hover::before {
   transform: translateX(120%);
+}
+
+/* Solid gold pill used for primary calls to action (Send Message,
+   Download CV, active filter, Live Demo). Same recipe as .btn-gold,
+   kept as its own class so it composes with whatever layout classes
+   (padding, inline-flex, etc.) each call site already supplies. */
+.glossy-gold {
+  color: var(--color-contrast);
+  background: linear-gradient(135deg, #e3c88f 0%, #c9a15d 55%, #b98f47 100%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.65) inset,
+    0 12px 28px -12px rgba(150, 105, 30, 0.7);
+}
+.glossy-gold:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Wrapper for the large floating glass panels (SectionPanel, Footer,
+   ProjectModal) -- establishes the positioning context the .glass-sheen
+   highlight clips to. */
+.glass-sheen-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+/* A soft, static diagonal light streak across the top of a glass
+   panel -- reads as a reflection on polished glass rather than a
+   button-style hover sweep. Purely decorative. */
+.glass-sheen {
+  position: absolute;
+  inset: -15% -10% auto -10%;
+  z-index: 0;
+  height: 55%;
+  pointer-events: none;
+  transform: rotate(-4deg);
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.16) 35%,
+    transparent 62%
+  );
+  mix-blend-mode: screen;
 }
 
 /* Cursor-aware spotlight for cards */

@@ -1,27 +1,14 @@
 import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import { projectFilters, projects } from "../data/projects";
 import SectionHeading from "../components/SectionHeading";
-import ProjectCard from "../components/ProjectCard";
+import ProjectCarousel from "../components/ProjectCarousel";
 import ProjectModal from "../components/ProjectModal";
 import ScrollReveal from "../components/ScrollReveal";
 import SectionPanel from "../components/SectionPanel";
-import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
-
-const gridVariants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.06 } },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
-};
 
 export default function Projects() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [openProject, setOpenProject] = useState(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
 
   const visibleProjects = useMemo(() => {
     if (activeFilter === "all") return projects;
@@ -63,24 +50,18 @@ export default function Projects() {
         </div>
       </ScrollReveal>
 
-      <motion.div
-        layout={!prefersReducedMotion}
-        variants={prefersReducedMotion ? undefined : gridVariants}
-        initial={prefersReducedMotion ? false : "hidden"}
-        animate={prefersReducedMotion ? false : "show"}
-        key={activeFilter}
-        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-      >
-        {visibleProjects.map((project) => (
-          <motion.div
-            key={project.id}
-            layout={!prefersReducedMotion}
-            variants={prefersReducedMotion ? undefined : cardVariants}
-          >
-            <ProjectCard project={project} onOpenCaseStudy={setOpenProject} />
-          </motion.div>
-        ))}
-      </motion.div>
+      <ScrollReveal delay={0.15}>
+        {visibleProjects.length > 0 ? (
+          <ProjectCarousel
+            projects={visibleProjects}
+            onOpenCaseStudy={setOpenProject}
+          />
+        ) : (
+          <p className="py-12 text-center text-sm text-text-secondary">
+            No projects match this filter yet.
+          </p>
+        )}
+      </ScrollReveal>
 
       <ProjectModal project={openProject} onClose={() => setOpenProject(null)} />
     </SectionPanel>
