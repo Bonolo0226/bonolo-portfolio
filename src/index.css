@@ -186,6 +186,18 @@ body::after {
   outline-offset: 3px;
 }
 
+/* A less-transparent glass surface for text-dense reading content
+   (the case-study modal) -- the standard .glass-strong is transparent
+   enough that long paragraphs lose contrast against whatever is
+   moving behind it. Same blur/border/shadow language, higher opacity. */
+.modal-surface {
+  @apply backdrop-blur-lg backdrop-saturate-150 border;
+  background: rgba(255, 255, 255, 0.86);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+    0 24px 56px -24px rgba(90, 66, 20, 0.4);
+}
+
 /* Wrapper for the large floating glass panels (SectionPanel, Footer,
    ProjectModal) -- establishes the positioning context the .glass-sheen
    highlight clips to. */

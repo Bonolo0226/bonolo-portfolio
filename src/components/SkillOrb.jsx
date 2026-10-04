@@ -23,7 +23,7 @@ export default function SkillOrb({ skill, category, index }) {
 
   return (
     <div
-      className="relative flex items-center justify-center"
+      className="relative flex w-20 flex-col items-center gap-2 sm:w-24"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
@@ -32,7 +32,7 @@ export default function SkillOrb({ skill, category, index }) {
       <motion.button
         type="button"
         tabIndex={0}
-        aria-label={`${skill.name} - ${levelLabels[skill.level]}, ${category}`}
+        aria-label={`${skill.name} — ${levelLabels[skill.level]}, ${category}`}
         className={`glass flex items-center justify-center rounded-full transition-transform duration-200 ${size.wrap}`}
         style={{
           backgroundImage: `radial-gradient(circle at 35% 30%, ${color}26 0%, transparent 70%)`,
@@ -54,15 +54,19 @@ export default function SkillOrb({ skill, category, index }) {
         <Icon size={size.icon} style={{ color }} />
       </motion.button>
 
+      <span className="max-w-full text-center font-mono text-[10.5px] leading-tight text-text-secondary sm:text-[11px]">
+        {skill.name}
+      </span>
+
       <motion.div
         role="tooltip"
         initial={false}
         animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 6 }}
         transition={{ duration: 0.18 }}
-        className="glass-strong pointer-events-none absolute bottom-full z-20 mb-2 whitespace-nowrap rounded-full px-3 py-1.5 text-xs"
+        className="glass-strong pointer-events-none absolute bottom-full z-20 mb-1 whitespace-nowrap rounded-full px-3 py-1.5 text-xs"
       >
-        <span className="font-medium text-text-primary">{skill.name}</span>
-        <span className="text-text-muted"> — {levelLabels[skill.level]}</span>
+        <span className="font-medium text-text-primary">{levelLabels[skill.level]}</span>
+        <span className="text-text-muted"> &middot; {category}</span>
       </motion.div>
     </div>
   );

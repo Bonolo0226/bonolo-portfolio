@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ExternalLink, X } from "lucide-react";
 import { GithubIcon } from "./icons";
@@ -27,11 +28,18 @@ export default function ProjectModal({ project, onClose }) {
     };
   }, [project, onClose]);
 
-  return (
+  // Rendered into document.body via a portal rather than in place.
+  // Several ancestor panels in this site use backdrop-filter for the
+  // glass effect, and per the CSS spec an element with backdrop-filter
+  // becomes the containing block for any `position: fixed` descendant
+  // -- which was trapping this modal inside that panel's rounded,
+  // overflow-hidden box instead of covering the full viewport. The
+  // portal sidesteps that regardless of which panel opened it.
+  return createPortal(
     <AnimatePresence>
       {project && (
         <motion.div
-          className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-[#2a2114]/40 px-4 py-10 backdrop-blur-md sm:py-16"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-[#2a2114]/55 p-4 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -44,7 +52,7 @@ export default function ProjectModal({ project, onClose }) {
             aria-modal="true"
             aria-labelledby="case-study-title"
             tabIndex={-1}
-            className="glass-strong relative w-full max-w-2xl overflow-hidden rounded-[28px] outline-none"
+            className="modal-surface relative flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-[28px] outline-none"
             initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 24, scale: prefersReducedMotion ? 1 : 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 16, scale: prefersReducedMotion ? 1 : 0.98 }}
@@ -52,7 +60,7 @@ export default function ProjectModal({ project, onClose }) {
             onClick={(event) => event.stopPropagation()}
           >
             <span className="glass-sheen" aria-hidden="true" />
-            <div className="relative z-10 flex items-start justify-between border-b border-border px-6 py-5">
+            <div className="relative z-10 flex shrink-0 items-start justify-between border-b border-border px-6 py-5">
               <div>
                 <p className="font-mono text-xs text-text-muted">
                   ~/projects/{project.id}
@@ -75,7 +83,7 @@ export default function ProjectModal({ project, onClose }) {
               </button>
             </div>
 
-            <div className="relative z-10 max-h-[70vh] space-y-8 overflow-y-auto px-6 py-6">
+            <div className="relative z-10 min-h-0 flex-1 space-y-8 overflow-y-auto px-6 py-6">
               <Field label="Problem" value={project.caseStudy.problem} />
               <Field label="Solution" value={project.caseStudy.solution} />
               <Field label="My Role" value={project.caseStudy.role} />
@@ -117,7 +125,7 @@ export default function ProjectModal({ project, onClose }) {
               <Field label="Lessons Learned" value={project.caseStudy.learnings} />
             </div>
 
-            <div className="relative z-10 flex flex-wrap items-center gap-3 border-t border-border px-6 py-5">
+            <div className="relative z-10 flex shrink-0 flex-wrap items-center gap-3 border-t border-border px-6 py-5">
               {project.github && (
                 <a
                   href={project.github}
@@ -152,7 +160,8 @@ export default function ProjectModal({ project, onClose }) {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
 
